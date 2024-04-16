@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'miat'
+version = '0.1'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'org.json:json:20240303'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.github.therealbush:translator:1.0.2'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'SummaryMain'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
