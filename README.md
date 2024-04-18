@@ -18,7 +18,7 @@ Create a file named ``APIKey`` in the same directory as the JAR. It should not h
 Your file structure should look like this -
 ```
 APIKey
-KF3summary.jar
+KF3summary-0.x-all.jar
 summary/
 └── untranslated/
 char/
@@ -27,6 +27,10 @@ char/
 ├── scenario_c_0001_01_3_a.prefab.json
 └── scenario_c_0001_01_1_b.prefab.json
 ```
+Once you have the correct folder structure and API key, use `java -jar KF3summary-0.x-all.jar` to run the program.
+
+Input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole. Do not add any leading zeroes.
+
 ## How it works
 This works by splitting the character scenario files in half- iterating over one half at a time, putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated half, summarizing the untranslated half, and saving the half to a file.
 
