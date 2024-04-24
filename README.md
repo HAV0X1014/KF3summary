@@ -34,13 +34,13 @@ Input the character ID for the character story you want to summarize. For exampl
 ## How it works
 This works by splitting the character scenario files in half- iterating over one half at a time, putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated half, summarizing the untranslated half, and saving the half to a file.
 
-The summarizer AI used is Google Gemini 1.0 for its large context size. In the future, other AI services may be supported.
+The summarizer AI used is Google Gemini 1.5 for its large context size. In the future, other AI services may be supported.
 
 The summary prompt provided to the AI is as follows -
 ```
 Create a complete summary for the following story: \n
 - Respond only in English.\n
-- The summary should be 2-3 paragraphs in length, and include all major events.\n
+- The summary should be 4-8 paragraphs in length, and include all major events.\n
 - Be thorough describing the events.\n
 - Specify which characters are involved in each event.\n
 - Use the characters' Japanese names when they are referred to.\n
@@ -52,10 +52,6 @@ Create a complete summary for the following story: \n
 ## Known issues
 Only Gemini is supported.
 
-Gemini 1.0 is not very good at correctly naming characters. I attempted to solve this by pre-translating names used in the story, however this didn't help the AI's summaries. This may be remediated with an improved prompt or AI.
-
 Rarely, the AI will ignore the input dialog. This might be a fault on the AI's side.
-
-Gemini 1.0 is not the best at creating summaries. Gemini 1.5 massively outperforms 1.0 on summaries, however 1.5 is not available on the API yet. I chose Google Gemini due to its free API and its (relatively) large context size.
 
 Obtaining the proper character .prefab.json scenarios is difficult. [However, it is possible to extract them.](https://cdn.discordapp.com/attachments/1100888255483875428/1230314644065882204/char.7z?ex=6632decd&is=662069cd&hm=3022dd9a141fce913a13c5654c66620d89a9cfd11b9e95aafb06e0b3358079d7&)
