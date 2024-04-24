@@ -32,7 +32,7 @@ public class GeminiAI {
         JSONObject userText = new JSONObject();
         userText.put("text", "Create a complete summary for the following story: \n" +
                 "- Respond only in English.\n" +
-                "- The summary should be 2-3 paragraphs in length, and include all major events.\n" +
+                "- The summary should be 4-8 paragraphs in length, and include all major events.\n" +
                 "- Be thorough describing the events.\n" +
                 "- Specify which characters are involved in each event.\n" +
                 "- Use the characters' Japanese names when they are referred to.\n" +
@@ -55,8 +55,8 @@ public class GeminiAI {
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         String output;
         try {
-            //to change model, change the gemini-1.0-pro-latest thing to whichever model you want.
-            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro-latest:generateContent?key=" + ReadKey.read("APIKey"));
+            //to change model, change the gemini-1.5-pro-latest thing to whichever model you want.
+            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + ReadKey.read("APIKey"));
             Request request = new Request.Builder().url(url).post(requestBody).build();
             String responseContent;
             try (Response resp = client.newCall(request).execute()) {
