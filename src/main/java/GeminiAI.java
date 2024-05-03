@@ -32,10 +32,10 @@ public class GeminiAI {
         JSONObject userText = new JSONObject();
         userText.put("text", "Create a complete summary for the following story: \n" +
                 "- Respond only in English.\n" +
-                "- The summary should be 4-8 paragraphs in length, and include all major events.\n" +
+                "- The summary should be 8-12 paragraphs in length, and include all major events.\n" +
                 "- Be thorough describing the events.\n" +
                 "- Specify which characters are involved in each event.\n" +
-                "- Use the characters' Japanese names when they are referred to.\n" +
+                "- Be specific about the tone of the characters. Describe their expressions and tone in detail.\n" +
                 "- This story happens in the main story of Kemono Friends 3, where human girls with animal features go on adventures, and fight against Celliens.\n" +
                 "\n\n" + dialog + "\n\nSummarize the story, and respond in English.");
 

@@ -16,6 +16,14 @@ public class SummaryMain {
             choice = sc.nextLine();
         }
 
+        /*
+        as of now, splitting chapters/character story is disabled. it will only output one
+        single text file per chapter and character story. since gemini 1.5 has 1 million context tokens available,
+        there really isnt any need to split the story. i think it makes the output a little worse when it is split.
+        to re-enable splitting, or to make it split more - make "int half = files.length / 2" ant "iter < 2"
+        basically just divide the "half" point into 2 parts and edit the amount of iterations accordingly.
+        i might spin off the actual summary code that is here into its own class like ReadScenario.
+        */
         if (choice.equals("main")) {
             folderPath = "main/";
             for (int loopOverEveryChapter = 0; loopOverEveryChapter < 10; loopOverEveryChapter++) {
@@ -24,9 +32,9 @@ public class SummaryMain {
 
                 File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_" + id + "_") && name.endsWith(".prefab.json"));
                 Arrays.sort(files, Comparator.naturalOrder());
-                int half = files.length / 2;
+                int half = files.length;
                 int stoppingPoint = half;
-                for (int iter = 0; iter < 2; iter++) {
+                for (int iter = 0; iter < 1; iter++) {
                     JSONArray charaNames = new JSONArray();                 //holds all of the character names used + duplicates
                     int startingPoint = 0;
                     if (iter > 0) {
@@ -73,9 +81,9 @@ public class SummaryMain {
 
             File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_c_" + id + "_") && name.endsWith(".prefab.json"));
             Arrays.sort(files, Comparator.naturalOrder());      //this is what puts them in the right order, lol
-            int half = files.length / 2;
+            int half = files.length;
             int stoppingPoint = half;
-            for (int iter = 0; iter < 2; iter++) {
+            for (int iter = 0; iter < 1; iter++) {
                 JSONArray charaNames = new JSONArray();                 //holds all of the character names used + duplicates
                 int startingPoint = 0;
                 if (iter > 0) {
