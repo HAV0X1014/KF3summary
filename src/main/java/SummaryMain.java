@@ -9,9 +9,9 @@ public class SummaryMain {
         Scanner sc = new Scanner(System.in);
         String folderPath = null;
 
-        System.out.println("Do you want to summarize the Main story or one Character story?\n (input \"main\" or \"char\")");
+        System.out.println("Do you want to summarize the Main story or one Character story?\n(input \"main\" or the ID of the Friend, format \"3\" or \"179\".)");
         String choice = sc.nextLine();
-        while (!choice.equals("main") && !choice.equals("char")) {
+        while (!choice.equals("main") && !isInt(choice)) {
             System.out.println("Incorrect selection. Choose \"main\" or \"char\"");
             choice = sc.nextLine();
         }
@@ -20,7 +20,7 @@ public class SummaryMain {
         as of now, splitting chapters/character story is disabled. it will only output one
         single text file per chapter and character story. since gemini 1.5 has 1 million context tokens available,
         there really isnt any need to split the story. i think it makes the output a little worse when it is split.
-        to re-enable splitting, or to make it split more - make "int half = files.length / 2" ant "iter < 2"
+        to re-enable splitting, or to make it split more - make "int half = files.length / 2" and "iter < 2"
         basically just divide the "half" point into 2 parts and edit the amount of iterations accordingly.
         i might spin off the actual summary code that is here into its own class like ReadScenario.
         */
@@ -56,26 +56,22 @@ public class SummaryMain {
                     String names = uniqueNames.toString().replaceAll("[\\[\\]]", "");    //remove the brackets
 
                     String fullScene = ParseDialog.parse(allScenarios);
-                    Write.write("summary/untranslated/" + id + "(" + (iter + 1) + ").txt", fullScene);
+                    Write.write("summary/untranslated/" + id + ".txt", fullScene);
 
                     System.out.println("---");
-                    System.out.println("Summarizing half " + (iter + 1) + "...");
+                    System.out.println("Summarizing chapter " + iter + "...");
                     //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
                     String summarizedScene = GeminiAI.send(fullScene.toString(), names, "");  //send the scenarios to the AI
                     System.out.println(summarizedScene);
 
                     //now write the summary into a file
-                    String filename = "summary/" + id + "(" + (iter + 1) + ").txt";
+                    String filename = "summary/" + id + ".txt";
                     Write.write(filename,summarizedScene);
                 }
             }
-        }
-
-        if (choice.equals("char")) {
+        } else {
             folderPath = "char/";
-            System.out.println("Input the ID of the character story you want to summarize. (format \"3\" or \"179\")");
-            String idUnformatted = sc.nextLine();
-            int idUnformattedInt = Integer.parseInt(idUnformatted);
+            int idUnformattedInt = Integer.parseInt(choice);
             String id = String.format("%04d",idUnformattedInt);
             File folder = new File(folderPath);
 
@@ -105,18 +101,26 @@ public class SummaryMain {
                 String names = uniqueNames.toString().replaceAll("[\\[\\]]", "");    //remove the brackets
 
                 String fullScene = ParseDialog.parse(allScenarios);
-                Write.write("summary/untranslated/" + id + "(" + (iter + 1) + ").txt", fullScene);
+                Write.write("summary/untranslated/" + id + ".txt", fullScene);
 
                 System.out.println("---");
-                System.out.println("Summarizing half " + (iter + 1) + "...");
+                System.out.println("Summarizing...");
                 //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
                 String summarizedScene = GeminiAI.send(fullScene, names, "");  //send the scenarios to the AI
                 System.out.println(summarizedScene);
 
                 //now write the summary into a file
-                String filename = "summary/" + id + "(" + (iter + 1) + ").txt";
-                Write.write(filename,summarizedScene);
+                String filename = "summary/" + id + ".txt";
+                Write.write(filename,summarizedScene + "\n[End of Summary.]\n[Involved Characters - " + names + "]");
             }
+        }
+    }
+    public static boolean isInt(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
         }
     }
 }
