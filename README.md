@@ -35,12 +35,12 @@ main/
 ```
 Once you have the correct folder structure and API key, use `java -jar KF3summary-0.x-all.jar` to run the program.
 
-Type `main` or `char` if you want to summarize the main or a specific character's story. `main` will summarize the entire main story.
+Type `main` or a character ID. If you want to summarize the main or a specific character's story. `main` will summarize the entire main story.
 
-If you chose `char`, input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole. Do not add any leading zeroes.
+If you chose to summarize a character story, input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole. Do not add any leading zeroes.
 
 ## How it works
-This works by splitting the character scenario files in half- iterating over one half at a time, putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated half, summarizing the untranslated half, and saving the half to a file.
+This works by putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated scenario, summarizing the untranslated story, and saving the summarized story to a file.
 
 The summarizer AI used is Google Gemini 1.5 for its large context size. In the future, other AI services may be supported.
 
@@ -60,6 +60,6 @@ Create a complete summary for the following story: \n
 ## Known issues
 Only Gemini is supported.
 
-Rarely, the AI will ignore the input dialog. This might be a fault on the AI's side.
+~Rarely, the AI will ignore the input dialog. This might be a fault on the AI's side.~ This hasn't happened in a while.
 
 Obtaining the proper character .prefab.json scenarios is difficult. [However, it is possible to extract them.](https://cdn.discordapp.com/attachments/1100888255483875428/1230314644065882204/char.7z?ex=6632decd&is=662069cd&hm=3022dd9a141fce913a13c5654c66620d89a9cfd11b9e95aafb06e0b3358079d7&) [There is work being done on this.](https://cdn.discordapp.com/attachments/1100888255483875428/1233923499563814953/main.7z?ex=662edc4f&is=662d8acf&hm=91d8d196ce8d2bcbcc3c74dcb4720c54c995419c807e32dd5ccb186f1a6b949b&)
