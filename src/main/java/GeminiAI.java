@@ -32,7 +32,7 @@ public class GeminiAI {
         JSONObject userText = new JSONObject();
         userText.put("text", "Create a complete summary for the following story: \n" +
                 "- Respond only in English.\n" +
-                "- The summary should be 8-12 paragraphs in length, and include all major events.\n" +
+                "- The summary should be 5-8 paragraphs in length, and include all major events.\n" +
                 "- Be thorough describing the events.\n" +
                 "- Specify which characters are involved in each event.\n" +
                 "- Be specific about the tone of the characters. Describe their expressions and tone in detail.\n" +
