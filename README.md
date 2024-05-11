@@ -62,4 +62,4 @@ Only Gemini is supported.
 
 ~Rarely, the AI will ignore the input dialog. This might be a fault on the AI's side.~ This hasn't happened in a while.
 
-Obtaining the proper character .prefab.json scenarios is difficult. [However, it is possible to extract them.](https://cdn.discordapp.com/attachments/1100888255483875428/1230314644065882204/char.7z?ex=6632decd&is=662069cd&hm=3022dd9a141fce913a13c5654c66620d89a9cfd11b9e95aafb06e0b3358079d7&) [There is work being done on this.](https://cdn.discordapp.com/attachments/1100888255483875428/1233923499563814953/main.7z?ex=662edc4f&is=662d8acf&hm=91d8d196ce8d2bcbcc3c74dcb4720c54c995419c807e32dd5ccb186f1a6b949b&)
+Obtaining the proper character .prefab.json scenarios is difficult.
