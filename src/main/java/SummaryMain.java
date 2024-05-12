@@ -5,16 +5,30 @@ import java.io.*;
 import java.util.*;
 
 public class SummaryMain {
+    public static JSONObject config;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String folderPath = null;
+        //setup process. if the config doesnt exist, make it. if the directories dont exist, make them.
+        if (!new File("config.json").exists()) {
+            ConfigHandler.createConfig();
+            System.out.println("**The config file has been created. Place your API key in config.json to use the summarizer!**\n");
+        }
+        if (!new File("summary/untranslated/").exists()) {
+            new File("summary/untranslated/").mkdirs();
+        }
 
+        //user input and validation
         System.out.println("Do you want to summarize the Main story or one Character story?\n(input \"main\" or the ID of the Friend, format \"3\" or \"179\".)");
         String choice = sc.nextLine();
         while (!choice.equals("main") && !isInt(choice)) {
             System.out.println("Incorrect selection. Choose \"main\" or \"char\"");
             choice = sc.nextLine();
         }
+
+        //read the config here, as the user should have entered it by now.
+        String configString = FileHandler.read("config.json");
+        config = new JSONObject(configString.trim());
 
         /*
         as of now, splitting chapters/character story is disabled. it will only output one
@@ -56,7 +70,7 @@ public class SummaryMain {
                     String names = uniqueNames.toString().replaceAll("[\\[\\]]", "");    //remove the brackets
 
                     String fullScene = ParseDialog.parse(allScenarios);
-                    Write.write("summary/untranslated/" + id + ".txt", fullScene);
+                    FileHandler.write("summary/untranslated/" + id + ".txt", fullScene);
 
                     System.out.println("---");
                     System.out.println("Summarizing chapter " + iter + "...");
@@ -66,7 +80,7 @@ public class SummaryMain {
 
                     //now write the summary into a file
                     String filename = "summary/" + id + ".txt";
-                    Write.write(filename,summarizedScene);
+                    FileHandler.write(filename,summarizedScene);
                 }
             }
         } else {
@@ -101,7 +115,7 @@ public class SummaryMain {
                 String names = uniqueNames.toString().replaceAll("[\\[\\]]", "");    //remove the brackets
 
                 String fullScene = ParseDialog.parse(allScenarios);
-                Write.write("summary/untranslated/" + id + ".txt", fullScene);
+                FileHandler.write("summary/untranslated/" + id + ".txt", fullScene);
 
                 System.out.println("---");
                 System.out.println("Summarizing...");
@@ -111,7 +125,7 @@ public class SummaryMain {
 
                 //now write the summary into a file
                 String filename = "summary/" + id + ".txt";
-                Write.write(filename,summarizedScene + "\n[End of Summary.]\n[Involved Characters - " + names + "]");
+                FileHandler.write(filename,summarizedScene + "\n[End of Summary.]\n[Involved Characters - " + names + "]");
             }
         }
     }

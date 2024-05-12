@@ -13,6 +13,18 @@ public class GeminiAI {
         //how gemini works is that the turns HAVE to be user -> model -> user -> model -> user and ALWAYS start and end with user
         //its really stupid, and making the JSON for this is a pain in the ass.
 
+        String prompt;
+        if (ConfigHandler.getString("PromptOverride").isEmpty()) {
+            prompt = "Create a complete summary for the following story: \n" +
+                    "- Respond only in English.\n" +
+                    "- The summary should be 5-8 paragraphs in length, and include all major events.\n" +
+                    "- Be thorough describing the events.\n" +
+                    "- Specify which characters are involved in each event.\n" +
+                    "- Be specific about the tone of the characters. Describe their expressions and tone in detail.\n" +
+                    "- This story happens in the main story of Kemono Friends 3, where human girls with animal features go on adventures, and fight against Celliens.\n";
+        } else {
+            prompt = ConfigHandler.getString("PromptOverride");
+        }
         /*
         //this would have been for a "system" prompt but apparently gemini doesnt have that.
         //not going to delete this but instead i shall comment it out.
@@ -30,14 +42,7 @@ public class GeminiAI {
         userPrompt.put("role", "user");
         JSONArray userParts = new JSONArray();
         JSONObject userText = new JSONObject();
-        userText.put("text", "Create a complete summary for the following story: \n" +
-                "- Respond only in English.\n" +
-                "- The summary should be 5-8 paragraphs in length, and include all major events.\n" +
-                "- Be thorough describing the events.\n" +
-                "- Specify which characters are involved in each event.\n" +
-                "- Be specific about the tone of the characters. Describe their expressions and tone in detail.\n" +
-                "- This story happens in the main story of Kemono Friends 3, where human girls with animal features go on adventures, and fight against Celliens.\n" +
-                "\n\n" + dialog + "\n\nSummarize the story, and respond in English.");
+        userText.put("text", prompt + "\n\n" + dialog + "\n\nSummarize the story, and respond in English.");
 
                 /*"This story happens in the Kemono Friends 3 mobile game, where human girls with animal features go on adventures, and fight against Celliens. " +
                 "Respond in english. The characters involved are " + names + ". " +
@@ -56,7 +61,7 @@ public class GeminiAI {
         String output;
         try {
             //to change model, change the gemini-1.5-pro-latest thing to whichever model you want.
-            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + ReadKey.read("APIKey"));
+            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + ConfigHandler.getString("GeminiAPIKey"));
             Request request = new Request.Builder().url(url).post(requestBody).build();
             String responseContent;
             try (Response resp = client.newCall(request).execute()) {

@@ -16,7 +16,7 @@ public class ParseDialog {
                         JSONArray dialogArray = jsonObject.getJSONArray("mStrParams");
                         for (Object sentence : dialogArray) {
                             if (!sentence.toString().equals("none")) {
-                                if (!sentence.toString().isBlank()) {
+                                if (!sentence.toString().isEmpty()) {
                                     String cleanedSentence = sentence.toString().replaceAll("<.*?>", "");
                                     dialog = charName + ": " + cleanedSentence + "\n";
                                 }
