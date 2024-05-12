@@ -1,5 +1,5 @@
 # KF3summary
-A Java program to summarize the character (and possibly main) stories.
+A Java program to summarize the character and main stories of Kemono Friends 3.
 
 ## Building
 Clone or download the repo.
@@ -9,16 +9,18 @@ Run `gradlew shadowJar` to compile the program into an executable JAR.
 Get the JAR from `build/libs/KF3summary-0.x-all.jar`.
 
 ## Usage
-In the same directory as the JAR, create a folder named `summary`, and inside that, create a folder named `untranslated`.
+Obtain the character story and main story .prefab.json files from KF3.
+
+Obtain a Google Gemini API key. You can get a free API key from https://aistudio.google.com/app/apikey .
 
 Place the `char` .prefab.json scenario files in a folder named `char` in the same directory as the JAR.
 Place the `main` .prefab.json scenario files in a folder named `main` in the same directory as the JAR.
 
-Create a file named ``APIKey`` in the same directory as the JAR. It should not have a file extension. Put your Google Gemini API key in this file. You can get a free API key from https://aistudio.google.com/app/apikey .
+Use `java -jar KF3summary-0.x-all.jar` to run the program. The program will generate the needed output folders and config file. Once the config.json file has been generated, put your Gemini API key where it says `GeminiAPIKey`. Do not edit `PromptOverride`.
 
-Your file structure should look like this -
+The correct file and folder structure should look like this.
 ```
-APIKey
+config.json
 KF3summary-0.x-all.jar
 summary/
 └── untranslated/
@@ -33,14 +35,13 @@ main/
 ├── scenario_m_00_02_1_a.prefab.json
 └── scenario_m_01_01_1_a.prefab.json
 ```
-Once you have the correct folder structure and API key, use `java -jar KF3summary-0.x-all.jar` to run the program.
 
-Type `main` or a character ID. If you want to summarize the main or a specific character's story. `main` will summarize the entire main story.
+Type `main` or a character ID if you want to summarize the main or a specific character's story. `main` will summarize the entire main story.
 
-If you chose to summarize a character story, input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole. Do not add any leading zeroes.
+If you chose to summarize a character story, input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole.
 
 ## How it works
-This works by putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated scenario, summarizing the untranslated story, and saving the summarized story to a file.
+This works by putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated story, summarizing the untranslated story, and saving the summarized story to a file.
 
 The summarizer AI used is Google Gemini 1.5 for its large context size. In the future, other AI services may be supported.
 
@@ -48,7 +49,7 @@ The summary prompt provided to the AI is as follows -
 ```
 Create a complete summary for the following story: \n
 - Respond only in English.\n
-- The summary should be 4-8 paragraphs in length, and include all major events.\n
+- The summary should be 5-8 paragraphs in length, and include all major events.\n
 - Be thorough describing the events.\n
 - Specify which characters are involved in each event.\n
 - Use the characters' Japanese names when they are referred to.\n
