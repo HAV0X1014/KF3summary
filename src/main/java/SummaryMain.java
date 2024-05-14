@@ -19,10 +19,11 @@ public class SummaryMain {
         }
 
         //user input and validation
-        System.out.println("Do you want to summarize the Main story or one Character story?\n(input \"main\" or the ID of the Friend, format \"3\" or \"179\".)");
+        System.out.println("Choose which story you want to summarize. Type \"main\", \"main2\", \"main3\", \"main4\", \"another\", \"event\" or a Friend ID.\n" +
+                "(To summarize a Friend story, input the ID of the Friend, format \"3\" or \"179\". \"event\" requires an ID for the event.)");
         String choice = sc.nextLine();
-        while (!choice.equals("main") && !isInt(choice)) {
-            System.out.println("Incorrect selection. Choose \"main\" or \"char\"");
+        while (!choice.equals("main") && !choice.equals("main2") && !choice.equals("main3") && !choice.equals("main4") && !choice.equals("another") && !choice.equals("event") && !isInt(choice)) {
+            System.out.println("Incorrect selection. Choose one of the above choices.");
             choice = sc.nextLine();
         }
 
@@ -30,103 +31,67 @@ public class SummaryMain {
         String configString = FileHandler.read("config.json");
         config = new JSONObject(configString.trim());
 
-        /*
-        as of now, splitting chapters/character story is disabled. it will only output one
-        single text file per chapter and character story. since gemini 1.5 has 1 million context tokens available,
-        there really isnt any need to split the story. i think it makes the output a little worse when it is split.
-        to re-enable splitting, or to make it split more - make "int half = files.length / 2" and "iter < 2"
-        basically just divide the "half" point into 2 parts and edit the amount of iterations accordingly.
-        i might spin off the actual summary code that is here into its own class like ReadScenario.
-        */
         if (choice.equals("main")) {
             folderPath = "main/";
             for (int loopOverEveryChapter = 0; loopOverEveryChapter < 10; loopOverEveryChapter++) {
                 String id = String.format("%02d",loopOverEveryChapter);
                 File folder = new File(folderPath);
-
                 File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_" + id + "_") && name.endsWith(".prefab.json"));
-                Arrays.sort(files, Comparator.naturalOrder());
-                int half = files.length;
-                int stoppingPoint = half;
-                for (int iter = 0; iter < 1; iter++) {
-                    JSONArray charaNames = new JSONArray();                 //holds all of the character names used + duplicates
-                    int startingPoint = 0;
-                    if (iter > 0) {
-                        //if we have already iterated once, start from the old stopping point
-                        startingPoint = stoppingPoint;
-                        stoppingPoint = stoppingPoint + half;
-                    }
-                    JSONArray allScenarios = ReadScenario.read(files, folderPath, startingPoint, stoppingPoint);
-
-                    //this loop gets the character names from the currently available scenarios and puts them in charaName
-                    for (int s = 0; s < allScenarios.length(); s++) {
-                        JSONObject scenario = allScenarios.getJSONObject(s);
-                        for (int i = 0; i < scenario.getJSONArray("charaDatas").length(); i++) {
-                            charaNames.put(scenario.getJSONArray("charaDatas").getJSONObject(i).getString("name"));
-                        }
-                    }
-
-                    JSONArray uniqueNames = RemoveDuplicates.removeDuplicates(charaNames);   //remove duplicate names to not confuse the AI
-                    String names = uniqueNames.toString().replaceAll("[\\[\\]]", "");    //remove the brackets
-
-                    String fullScene = ParseDialog.parse(allScenarios);
-                    FileHandler.write("summary/untranslated/" + id + ".txt", fullScene);
-
-                    System.out.println("---");
-                    System.out.println("Summarizing chapter " + iter + "...");
-                    //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
-                    String summarizedScene = GeminiAI.send(fullScene.toString(), names, "");  //send the scenarios to the AI
-                    System.out.println(summarizedScene);
-
-                    //now write the summary into a file
-                    String filename = "summary/" + id + ".txt";
-                    FileHandler.write(filename,summarizedScene);
-                }
+                Summarize.summarize(files,folderPath,id,"main_");
             }
-        } else {
-            folderPath = "char/";
-            int idUnformattedInt = Integer.parseInt(choice);
-            String id = String.format("%04d",idUnformattedInt);
+        } else
+        if (choice.equals("main2")) {
+            folderPath = "main/";
+            for (int loopOverEveryChapter = 1; loopOverEveryChapter < 6; loopOverEveryChapter++) {
+                String id = String.format("%02d",loopOverEveryChapter);
+                File folder = new File(folderPath);
+                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_002_" + id + "_") && name.endsWith(".prefab.json"));
+                Summarize.summarize(files,folderPath,id,"main2_");
+            }
+        } else
+        if (choice.equals("main3")) {
+            folderPath = "main/";
+            for (int loopOverEveryChapter = 0; loopOverEveryChapter < 8; loopOverEveryChapter++) {
+                String id = String.format("%02d",loopOverEveryChapter);
+                File folder = new File(folderPath);
+                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_003_" + id + "_") && name.endsWith(".prefab.json"));
+                Summarize.summarize(files,folderPath,id,"main3_");
+            }
+        } else
+        if (choice.equals("main4")) {
+            folderPath = "main/";
+            for (int loopOverEveryChapter = 0; loopOverEveryChapter < 5; loopOverEveryChapter++) {
+                String id = String.format("%02d",loopOverEveryChapter);
+                File folder = new File(folderPath);
+                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_004_" + id + "_") && name.endsWith(".prefab.json"));
+                Summarize.summarize(files,folderPath,id,"main4_");
+            }
+        } else
+        if (choice.equals("another")) {
+            folderPath = "another/";
+            for (int loopOverEveryChapter = 1; loopOverEveryChapter < 7; loopOverEveryChapter++) {
+                String id = String.format("%02d",loopOverEveryChapter);
+                File folder = new File(folderPath);
+                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_a_" + id + "_") && name.endsWith(".prefab.json"));
+                Summarize.summarize(files,folderPath,id,"another_");
+            }
+        } else
+        if (choice.equals("event")) {
+            folderPath = "event/";
+            System.out.println("Input the ID of the event you want to summarize.");
+            String id = sc.nextLine();
+
             File folder = new File(folderPath);
+            File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_e_" + id + "_") && name.endsWith(".prefab.json"));
+            Summarize.summarize(files,folderPath,id,"event_");
+        } else {
+                folderPath = "char/";
+                int idUnformattedInt = Integer.parseInt(choice);
+                String id = String.format("%04d",idUnformattedInt);
+                File folder = new File(folderPath);
 
-            File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_c_" + id + "_") && name.endsWith(".prefab.json"));
-            Arrays.sort(files, Comparator.naturalOrder());      //this is what puts them in the right order, lol
-            int half = files.length;
-            int stoppingPoint = half;
-            for (int iter = 0; iter < 1; iter++) {
-                JSONArray charaNames = new JSONArray();                 //holds all of the character names used + duplicates
-                int startingPoint = 0;
-                if (iter > 0) {
-                    //if we have already iterated once, start from the old stopping point
-                    startingPoint = stoppingPoint;
-                    stoppingPoint = stoppingPoint + half;
-                }
-                JSONArray allScenarios = ReadScenario.read(files, folderPath, startingPoint, stoppingPoint);
-
-                //this loop gets the character names from the currently available scenarios and puts them in charaName
-                for (int s = 0; s < allScenarios.length(); s++) {
-                    JSONObject scenario = allScenarios.getJSONObject(s);
-                    for (int i = 0; i < scenario.getJSONArray("charaDatas").length(); i++) {
-                        charaNames.put(scenario.getJSONArray("charaDatas").getJSONObject(i).getString("name"));
-                    }
-                }
-
-                JSONArray uniqueNames = RemoveDuplicates.removeDuplicates(charaNames);   //remove duplicate names to not confuse the AI
-                String names = uniqueNames.toString().replaceAll("[\\[\\]]", "");    //remove the brackets
-
-                String fullScene = ParseDialog.parse(allScenarios);
-                FileHandler.write("summary/untranslated/" + id + ".txt", fullScene);
-
-                System.out.println("---");
-                System.out.println("Summarizing...");
-                //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
-                String summarizedScene = GeminiAI.send(fullScene, names, "");  //send the scenarios to the AI
-                System.out.println(summarizedScene);
-
-                //now write the summary into a file
-                String filename = "summary/" + id + ".txt";
-                FileHandler.write(filename,summarizedScene + "\n[End of Summary.]\n[Involved Characters - " + names + "]");
-            }
+                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_c_" + id + "_") && name.endsWith(".prefab.json"));
+                Summarize.summarize(files,folderPath,id,"char_");
         }
     }
     public static boolean isInt(String input) {
