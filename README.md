@@ -9,12 +9,11 @@ Run `gradlew shadowJar` to compile the program into an executable JAR.
 Get the JAR from `build/libs/KF3summary-0.x-all.jar`.
 
 ## Usage
-Obtain the character story and main story .prefab.json files from KF3.
+Obtain the story .prefab.json files from KF3.
 
 Obtain a Google Gemini API key. You can get a free API key from https://aistudio.google.com/app/apikey .
 
-Place the `char` .prefab.json scenario files in a folder named `char` in the same directory as the JAR.
-Place the `main` .prefab.json scenario files in a folder named `main` in the same directory as the JAR.
+Place the .prefab.json scenario files in a folder named in the same directory as the JAR. You should have folders named "another", "char", "event", "login", and "main".
 
 Use `java -jar KF3summary-0.x-all.jar` to run the program. The program will generate the needed output folders and config file. Once the config.json file has been generated, put your Gemini API key where it says `GeminiAPIKey`. Do not edit `PromptOverride`.
 
@@ -24,21 +23,18 @@ config.json
 KF3summary-0.x-all.jar
 summary/
 └── untranslated/
+another/
 char/
-├── scenario_c_0001_01_1_a.prefab.json
-├── scenario_c_0001_01_2_a.prefab.json
-├── scenario_c_0001_01_3_a.prefab.json
-└── scenario_c_0001_01_1_b.prefab.json
+event/
+login/
 main/
-├── scenario_m_00_01_1_a.prefab.json
-├── scenario_m_00_01_1_b.prefab.json
-├── scenario_m_00_02_1_a.prefab.json
-└── scenario_m_01_01_1_a.prefab.json
 ```
 
-Type `main` or a character ID if you want to summarize the main or a specific character's story. `main` will summarize the entire main story.
+The summarization options are "main" for main story 1, "main2" for main story 2, "main3" for main story 3, "main4" for main story 4, "another" for Arai-san's story, "event" for events, and a specific character's story.
 
-If you chose to summarize a character story, input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole.
+If you chose to summarize a character story, input the character ID for the character story you want to summarize. For example, `322` is Serval, `69` is Cheetah, `1` is Dhole. Enter the ID at the first prompt.
+
+If you choose to summarize an event, enter "event" and then the ID of the event when prompted.
 
 ## How it works
 This works by putting the scenarios together in order, getting the relevant character names, parsing out only the dialog in a "name: text" format, saving the untranslated story, summarizing the untranslated story, and saving the summarized story to a file.
@@ -58,9 +54,13 @@ Create a complete summary for the following story: \n
 [dialog]
 \n\nSummarize the story, and respond in English.
 ```
+To override the default prompt, enter your custom prompt in config.json. use `\n` for newlines.
+
 ## Known issues
 Only Gemini is supported.
 
 ~Rarely, the AI will ignore the input dialog. This might be a fault on the AI's side.~ This hasn't happened in a while.
 
 Obtaining the proper character .prefab.json scenarios is difficult.
+
+The AI cannot get some names correct. It will often incorrectly name characters - i.e. calling Dhole "doll". To remediate the issue, I have added a section at the end of the summary that contains all untranslated names of characters involved in the summarized story.
