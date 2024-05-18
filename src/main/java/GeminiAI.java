@@ -44,11 +44,6 @@ public class GeminiAI {
         JSONObject userText = new JSONObject();
         userText.put("text", prompt + "\n\n" + dialog + "\n\nSummarize the story, and respond in English.");
 
-                /*"This story happens in the Kemono Friends 3 mobile game, where human girls with animal features go on adventures, and fight against Celliens. " +
-                "Respond in english. The characters involved are " + names + ". " +
-                "Be specific about actions and events that occurred. Create a complete summary for the following story.  ---\n\n" + dialog +
-                "\n\n---\n\nSummarize the story, and respond in English."); */
-
         userParts.put(userText);
         userPrompt.put("parts", userParts);
         contents.put(userPrompt);
@@ -69,7 +64,6 @@ public class GeminiAI {
             }
             //you know what i hate more than googles INPUT json?????? OUTPUT JSON!!!!
             JSONObject response = new JSONObject(responseContent);
-            //System.out.println(responseContent);
             output = response.getJSONArray("candidates").getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text");
         } catch (Exception e) {
             throw new RuntimeException(e);

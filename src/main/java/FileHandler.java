@@ -12,16 +12,15 @@ public class FileHandler {
         }
     }
     public static String read(String filepath) {
-        String fullText = "";
-
+        StringBuilder fullText = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                fullText += line;
+                fullText.append(line);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return fullText;
+        return fullText.toString();
     }
 }

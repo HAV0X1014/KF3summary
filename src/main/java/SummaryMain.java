@@ -1,4 +1,3 @@
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -6,16 +5,17 @@ import java.util.*;
 
 public class SummaryMain {
     public static JSONObject config;
+    public static final File SummaryDirs = new File("summary/untranslated/");
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String folderPath = null;
+        String folderPath;
         //setup process. if the config doesnt exist, make it. if the directories dont exist, make them.
         if (!new File("config.json").exists()) {
             ConfigHandler.createConfig();
             System.out.println("**The config file has been created. Place your API key in config.json to use the summarizer!**\n");
         }
-        if (!new File("summary/untranslated/").exists()) {
-            new File("summary/untranslated/").mkdirs();
+        if (!SummaryDirs.exists()) {
+            SummaryDirs.mkdirs();
         }
 
         //user input and validation
@@ -31,67 +31,71 @@ public class SummaryMain {
         String configString = FileHandler.read("config.json");
         config = new JSONObject(configString.trim());
 
-        if (choice.equals("main")) {
-            folderPath = "main/";
-            for (int loopOverEveryChapter = 0; loopOverEveryChapter < 10; loopOverEveryChapter++) {
-                String id = String.format("%02d",loopOverEveryChapter);
+        switch (choice) {
+            case "main":
+                folderPath = "main/";
+                for (int loopOverEveryChapter = 0; loopOverEveryChapter < 10; loopOverEveryChapter++) {
+                    String id = String.format("%02d", loopOverEveryChapter);
+                    File folder = new File(folderPath);
+                    File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_" + id + "_") && name.endsWith(".prefab.json"));
+                    Summarize.summarize(files, folderPath, id, "main_");
+                }
+                break;
+            case "main2":
+                folderPath = "main/";
+                for (int loopOverEveryChapter = 1; loopOverEveryChapter < 6; loopOverEveryChapter++) {
+                    String id = String.format("%02d", loopOverEveryChapter);
+                    File folder = new File(folderPath);
+                    File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_002_" + id + "_") && name.endsWith(".prefab.json"));
+                    Summarize.summarize(files, folderPath, id, "main2_");
+                }
+                break;
+            case "main3":
+                folderPath = "main/";
+                for (int loopOverEveryChapter = 0; loopOverEveryChapter < 8; loopOverEveryChapter++) {
+                    String id = String.format("%02d", loopOverEveryChapter);
+                    File folder = new File(folderPath);
+                    File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_003_" + id + "_") && name.endsWith(".prefab.json"));
+                    Summarize.summarize(files, folderPath, id, "main3_");
+                }
+                break;
+            case "main4":
+                folderPath = "main/";
+                for (int loopOverEveryChapter = 0; loopOverEveryChapter < 5; loopOverEveryChapter++) {
+                    String id = String.format("%02d", loopOverEveryChapter);
+                    File folder = new File(folderPath);
+                    File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_004_" + id + "_") && name.endsWith(".prefab.json"));
+                    Summarize.summarize(files, folderPath, id, "main4_");
+                }
+                break;
+            case "another":
+                folderPath = "another/";
+                for (int loopOverEveryChapter = 1; loopOverEveryChapter < 7; loopOverEveryChapter++) {
+                    String id = String.format("%02d", loopOverEveryChapter);
+                    File folder = new File(folderPath);
+                    File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_a_" + id + "_") && name.endsWith(".prefab.json"));
+                    Summarize.summarize(files, folderPath, id, "another_");
+                }
+                break;
+            case "event": {
+                folderPath = "event/";
+                System.out.println("Input the ID of the event you want to summarize.");
+                String id = sc.nextLine();
+                
                 File folder = new File(folderPath);
-                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files,folderPath,id,"main_");
+                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_e_" + id + "_") && name.endsWith(".prefab.json"));
+                Summarize.summarize(files, folderPath, id, "event_");
+                break;
             }
-        } else
-        if (choice.equals("main2")) {
-            folderPath = "main/";
-            for (int loopOverEveryChapter = 1; loopOverEveryChapter < 6; loopOverEveryChapter++) {
-                String id = String.format("%02d",loopOverEveryChapter);
-                File folder = new File(folderPath);
-                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_002_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files,folderPath,id,"main2_");
-            }
-        } else
-        if (choice.equals("main3")) {
-            folderPath = "main/";
-            for (int loopOverEveryChapter = 0; loopOverEveryChapter < 8; loopOverEveryChapter++) {
-                String id = String.format("%02d",loopOverEveryChapter);
-                File folder = new File(folderPath);
-                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_003_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files,folderPath,id,"main3_");
-            }
-        } else
-        if (choice.equals("main4")) {
-            folderPath = "main/";
-            for (int loopOverEveryChapter = 0; loopOverEveryChapter < 5; loopOverEveryChapter++) {
-                String id = String.format("%02d",loopOverEveryChapter);
-                File folder = new File(folderPath);
-                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_m_004_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files,folderPath,id,"main4_");
-            }
-        } else
-        if (choice.equals("another")) {
-            folderPath = "another/";
-            for (int loopOverEveryChapter = 1; loopOverEveryChapter < 7; loopOverEveryChapter++) {
-                String id = String.format("%02d",loopOverEveryChapter);
-                File folder = new File(folderPath);
-                File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_a_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files,folderPath,id,"another_");
-            }
-        } else
-        if (choice.equals("event")) {
-            folderPath = "event/";
-            System.out.println("Input the ID of the event you want to summarize.");
-            String id = sc.nextLine();
-
-            File folder = new File(folderPath);
-            File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_e_" + id + "_") && name.endsWith(".prefab.json"));
-            Summarize.summarize(files,folderPath,id,"event_");
-        } else {
+            default: {
                 folderPath = "char/";
                 int idUnformattedInt = Integer.parseInt(choice);
-                String id = String.format("%04d",idUnformattedInt);
+                String id = String.format("%04d", idUnformattedInt);
                 File folder = new File(folderPath);
-
                 File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_c_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files,folderPath,id,"char_");
+                Summarize.summarize(files, folderPath, id, "char_");
+                break;
+            }
         }
     }
     public static boolean isInt(String input) {
