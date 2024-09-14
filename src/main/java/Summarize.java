@@ -1,17 +1,12 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Summarize {
-    public static void summarize(File[] files, String folderPath,String id,String outputPrefix) {
+    public static void summarize(File[] files, String folderPath, String id, String outputPrefix) {
         Arrays.sort(files, Comparator.naturalOrder());
         int half = files.length;
         int stoppingPoint = half;                                   //"half" does not mean division by two.
@@ -40,7 +35,26 @@ public class Summarize {
                 }
             }
             //remove duplicates from the list of charaNames and also remove the brackets from that string
-            String names = removeDuplicates(charaNames).toString().replaceAll("[\\[\\]]", "");
+            StringBuilder names = new StringBuilder();
+            List<Object> charaNamesList = charaNames.toList().stream().distinct().collect(Collectors.toList());
+
+            JSONArray jsonArray = new JSONArray(FileHandler.read("CHARA_DATA.json"));
+            // Populate the map with data from the chara data list
+            Map<String, JSONObject> nameMap = new HashMap<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String name = jsonObject.getString("name");
+                nameMap.put(name, jsonObject);
+            }
+            //look up the name of the character in the Map and match that to their respective friend ID and english name
+            for (Object name : charaNamesList.toArray()) {
+                JSONObject result = nameMap.get(name.toString());
+                if (result != null) {
+                    String nameEn = result.getString("nameEn");
+                    names.append(name).append("|").append(nameEn).append(", ");
+                    //format is "nameJP|nameEN,"
+                }
+            }
 
             StringBuilder fullScene = new StringBuilder();
             String dialog = null;
@@ -57,7 +71,14 @@ public class Summarize {
                                 if (!sentence.toString().equals("none")) {
                                     if (!sentence.toString().isEmpty()) {
                                         String cleanedSentence = sentence.toString().replaceAll("<.*?>", "");
-                                        dialog = charName + ": " + cleanedSentence + "\n";
+                                        //if the name we are looking up (the current speaking character's name) ISNT in
+                                        //the name map, then dont add it to the dialog pair. (cellien, human characters, etc)
+                                        JSONObject result = nameMap.get(charName);
+                                        if (result == null) {
+                                            dialog = charName + ": " + cleanedSentence + "\n";
+                                        } else {
+                                            dialog = charName + "|" + result.getString("nameEn") + ": " + cleanedSentence + "\n";
+                                        }
                                     }
                                 }
                             }
@@ -71,26 +92,12 @@ public class Summarize {
             System.out.println("---");
             System.out.println("Summarizing " + id + "...");
             //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
-            String summarizedScene = GeminiAI.send(fullScene.toString(), names, "");  //send the scenarios to the AI
+            String summarizedScene = GeminiAI.send(fullScene.toString(), names.toString(), "");  //send the scenarios to the AI
             System.out.println(summarizedScene);
 
             //now write the summary into a file
             String filename = "summary/" + outputPrefix + id + ".txt";
-            FileHandler.write(filename, summarizedScene + "\n[End of Summary.]\n[Involved Characters - " + names + "]");
+            FileHandler.write(filename, summarizedScene + "\n[End of Summary.]\n[Involved Characters - " + names.toString() + "]");
         }
-    }
-    public static JSONArray removeDuplicates(JSONArray jsonArray) {
-        //some nice code that claude 3 generated that works well. basically uses something that already has an
-        //"add only if it doesnt exist yet" function then puts it back in a JSONArray. pretty thrifty nifty.
-        Set<String> uniqueElements = new HashSet<>();
-        JSONArray uniqueArray = new JSONArray();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            String element = jsonArray.getString(i);
-            if (uniqueElements.add(element)) { // add returns true if element is not already present
-                uniqueArray.put(element);
-            }
-        }
-        return uniqueArray;
     }
 }

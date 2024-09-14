@@ -54,11 +54,11 @@ public class GeminiAI {
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         String output;
+        String responseContent = "";
         try {
             //to change model, change the gemini-1.5-pro-latest thing to whichever model you want.
             URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + ConfigHandler.getString("GeminiAPIKey"));
             Request request = new Request.Builder().url(url).post(requestBody).build();
-            String responseContent;
             try (Response resp = client.newCall(request).execute()) {
                 responseContent = resp.body().string();
             }
@@ -66,6 +66,7 @@ public class GeminiAI {
             JSONObject response = new JSONObject(responseContent);
             output = response.getJSONArray("candidates").getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text");
         } catch (Exception e) {
+            System.out.println("[Gemini API error.]\n\n" + responseContent);
             throw new RuntimeException(e);
         }
         return output;

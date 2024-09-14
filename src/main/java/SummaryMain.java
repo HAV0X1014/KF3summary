@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -93,7 +94,26 @@ public class SummaryMain {
                 String id = String.format("%04d", idUnformattedInt);
                 File folder = new File(folderPath);
                 File[] files = folder.listFiles((dir, name) -> name.startsWith("scenario_c_" + id + "_") && name.endsWith(".prefab.json"));
-                Summarize.summarize(files, folderPath, id, "char_");
+
+                JSONArray jsonArray = new JSONArray(FileHandler.read("CHARA_DATA.json"));
+                // Populate the map with data from the chara data list
+                Map<Integer, JSONObject> idMap = new HashMap<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Integer friendID = jsonObject.getInt("id");
+                    idMap.put(friendID, jsonObject);
+                }
+                String nameEn = "NO-MATCH";
+                //look up the id of the character in the Map and match that to their respective name and english name
+                for (Object friend : idMap.keySet().toArray()) {
+                    JSONObject result = idMap.get(Integer.parseInt(friend.toString()));
+                    if (result.getInt("id") == Integer.parseInt(id)) {
+                        int friendID = result.getInt("id");
+                        nameEn = result.getString("nameEn");
+                        System.out.println("ID: " + friendID + ", NameEN: " + nameEn);
+                    }
+                }
+                Summarize.summarize(files, folderPath, id, nameEn + "_char_");
                 break;
             }
         }
