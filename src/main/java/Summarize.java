@@ -38,17 +38,9 @@ public class Summarize {
             StringBuilder names = new StringBuilder();
             List<Object> charaNamesList = charaNames.toList().stream().distinct().collect(Collectors.toList());
 
-            JSONArray jsonArray = new JSONArray(FileHandler.read("CHARA_DATA.json"));
-            // Populate the map with data from the chara data list
-            Map<String, JSONObject> nameMap = new HashMap<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String name = jsonObject.getString("name");
-                nameMap.put(name, jsonObject);
-            }
             //look up the name of the character in the Map and match that to their respective friend ID and english name
             for (Object name : charaNamesList.toArray()) {
-                JSONObject result = nameMap.get(name.toString());
+                JSONObject result = SummaryMain.nameMap.get(name.toString());
                 if (result != null) {
                     String nameEn = result.getString("nameEn");
                     names.append(name).append("|").append(nameEn).append(", ");
@@ -73,7 +65,7 @@ public class Summarize {
                                         String cleanedSentence = sentence.toString().replaceAll("<.*?>", "");
                                         //if the name we are looking up (the current speaking character's name) ISNT in
                                         //the name map, then dont add it to the dialog pair. (cellien, human characters, etc)
-                                        JSONObject result = nameMap.get(charName);
+                                        JSONObject result = SummaryMain.nameMap.get(charName);
                                         if (result == null) {
                                             dialog = charName + ": " + cleanedSentence + "\n";
                                         } else {
@@ -92,7 +84,7 @@ public class Summarize {
             System.out.println("---");
             System.out.println("Summarizing " + id + "...");
             //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
-            String summarizedScene = GeminiAI.send(fullScene.toString(), names.toString(), "");  //send the scenarios to the AI
+            String summarizedScene = GeminiAI.send(fullScene.toString(), SummaryMain.idMap.get(Integer.parseInt(id)).getString("nameEn"));  //send the scenarios to the AI
             System.out.println(summarizedScene);
 
             //now write the summary into a file

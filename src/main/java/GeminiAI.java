@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GeminiAI {
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-    public static String send(String dialog, String untranslatedNames, String translatedNames) {
+    public static String send(String dialog, String mainCharacter) {
         OkHttpClient client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(120, TimeUnit.SECONDS).build();
         JSONObject payload = new JSONObject();          //holds the whole object of JSON sent to google
         JSONArray contents = new JSONArray();           //holds the text content sent to the AI
@@ -23,7 +23,7 @@ public class GeminiAI {
                     "- Be specific about the tone of the characters. Describe their expressions and tone in detail.\n" +
                     "- This story happens in the main story of Kemono Friends 3, where human girls with animal features go on adventures, and fight against Celliens.\n";
         } else {
-            prompt = ConfigHandler.getString("PromptOverride");
+            prompt = ConfigHandler.getString("PromptOverride").replaceAll("\\{char}", mainCharacter);
         }
         /*
         //this would have been for a "system" prompt but apparently gemini doesnt have that.
@@ -50,14 +50,38 @@ public class GeminiAI {
         //this hunk of shit puts the text into googles special little array with an object inside or something
         //i hate google's stupid fucking API formatting
 
+        JSONArray safetySettings = new JSONArray();
+        JSONObject catHar = new JSONObject();
+        catHar.put("category", "HARM_CATEGORY_HARASSMENT");
+        catHar.put("threshold", "BLOCK_NONE");
+
+        JSONObject catHtSp = new JSONObject();
+        catHtSp.put("category", "HARM_CATEGORY_HATE_SPEECH");
+        catHtSp.put("threshold", "BLOCK_NONE");
+
+        JSONObject catSxExp = new JSONObject();
+        catSxExp.put("category", "HARM_CATEGORY_SEXUALLY_EXPLICIT");
+        catSxExp.put("threshold", "BLOCK_NONE");
+
+        JSONObject catDngCnt = new JSONObject();
+        catDngCnt.put("category", "HARM_CATEGORY_DANGEROUS_CONTENT");
+        catDngCnt.put("threshold", "BLOCK_NONE");
+
+        safetySettings.put(catHar);
+        safetySettings.put(catHtSp);
+        safetySettings.put(catSxExp);
+        safetySettings.put(catDngCnt);
+
+        payload.put("safetySettings", safetySettings);
         payload.put("contents",contents);
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         String output;
         String responseContent = "";
+
         try {
-            //to change model, change the gemini-1.5-pro-latest thing to whichever model you want.
-            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + ConfigHandler.getString("GeminiAPIKey"));
+            //to change model, change the gemini-1.5-flash-latest thing to whichever model you want.
+            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + ConfigHandler.getString("GeminiAPIKey"));
             Request request = new Request.Builder().url(url).post(requestBody).build();
             try (Response resp = client.newCall(request).execute()) {
                 responseContent = resp.body().string();
