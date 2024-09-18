@@ -83,7 +83,15 @@ public class Summarize {
             System.out.println("---");
             System.out.println("Summarizing " + id + "...");
             //String translatedNames = Translate.translator(names);   //translate the names with google translate first UNUSED
-            String summarizedScene = GeminiAI.send(fullScene.toString(), SummaryMain.idMap.get(Integer.parseInt(id)).getString("nameEn"));  //send the scenarios to the AI
+            String mainCharacterName = "";
+            JSONObject tempObj = SummaryMain.idMap.get(Integer.parseInt(id));
+            if (tempObj != null) {
+                String tempName = tempObj.getString("nameEn");
+                if (tempName != null) {
+                    mainCharacterName = tempName;
+                }
+            }
+            String summarizedScene = GeminiAI.send(fullScene.toString(), mainCharacterName);  //send the scenarios to the AI
             System.out.println(summarizedScene);
 
             //now write the summary into a file
