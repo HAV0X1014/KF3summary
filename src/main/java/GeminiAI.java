@@ -90,7 +90,7 @@ public class GeminiAI {
             JSONObject response = new JSONObject(responseContent);
             output = response.getJSONArray("candidates").getJSONObject(0).getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text");
         } catch (Exception e) {
-            System.out.println("[Gemini API error.]\n\n" + responseContent);
+            System.out.println("[Gemini API error.]\n" + responseContent);
             throw new RuntimeException(e);
         }
         return output;

@@ -16,7 +16,10 @@ public class SummaryMain {
         //setup process. if the config doesnt exist, make it. if the directories dont exist, make them.
         if (!new File("config.json").exists()) {
             ConfigHandler.createConfig();
-            System.out.println("**The config file has been created. Place your API key in config.json to use the summarizer!**\n");
+            System.out.println("**The config file has been created. Place your API key in config.json to use the summarizer!**\n" +
+                    "Since your config file and folder have been created, I assume this is your first time using this summarizer.\n" +
+                    "Place the folders named 'another,' 'char,' 'event,' 'login,' and 'main' in the *same directory* as this\n" +
+                    "program. Place the file named 'CHARA_DATAS.json' in the same directory as this program as well.\n");
         }
         if (!SummaryDirs.exists()) {
             SummaryDirs.mkdirs();
@@ -37,7 +40,7 @@ public class SummaryMain {
         while (true) {
             //user input and validation
             System.out.println("Choose which story you want to summarize. Type \"main\", \"main2\", \"main3\", \"main4\", \"another\", \"event\" or a Friend ID.\n" +
-                    "(To summarize a Friend story, input the ID of the Friend, format \"3\" or \"179\". \"event\" requires an ID for the event.)\n" +
+                    "(To summarize a Friend story, input the ID of the Friend, format \"3\" or \"179\". \"event\" also requires an ID for the event.)\n" +
                     "[Use ctrl + c to quit]");
             String choice = sc.nextLine();
             while (!choice.equals("main") && !choice.equals("main2") && !choice.equals("main3") && !choice.equals("main4") && !choice.equals("another") && !choice.equals("event") && !isInt(choice)) {

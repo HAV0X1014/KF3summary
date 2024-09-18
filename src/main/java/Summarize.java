@@ -23,8 +23,7 @@ public class Summarize {
             JSONArray allScenarios = new JSONArray();
             for (int f = startingPoint; f < stoppingPoint; f++) {
                 File file = files[f];
-                String fileContents = FileHandler.read(folderPath + file.getName());
-                JSONObject scenario = new JSONObject(fileContents);
+                JSONObject scenario = new JSONObject(FileHandler.read(folderPath + file.getName()));
                 allScenarios.put(scenario);
             }
             //this loop gets the character names from the currently available scenarios and puts them in charaName
