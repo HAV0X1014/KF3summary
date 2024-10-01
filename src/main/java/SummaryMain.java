@@ -29,12 +29,8 @@ public class SummaryMain {
         for (int i = 0; i < charaData.length(); i++) {
             JSONObject jsonObject = charaData.getJSONObject(i);
             Integer friendID = jsonObject.getInt("id");
-            idMap.put(friendID, jsonObject);
-        }
-        // Populate the map with data from the chara data list
-        for (int i = 0; i < charaData.length(); i++) {
-            JSONObject jsonObject = charaData.getJSONObject(i);
             String name = jsonObject.getString("name");
+            idMap.put(friendID, jsonObject);
             nameMap.put(name, jsonObject);
         }
         while (true) {
